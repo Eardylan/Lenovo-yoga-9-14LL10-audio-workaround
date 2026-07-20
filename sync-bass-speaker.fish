@@ -1,32 +1,35 @@
 #!/usr/bin/env fish
 
-set card 0
-set last_volume ""
+set --global card 0
+set --global last_value -1
 
 function sync_bass
-    set volume (
-        pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null |
-        string match -r '[0-9]+%' |
+    # Allow PipeWire/ALSA to finish updating Speaker first.
+    sleep 0.05
+
+    set speaker_value (
+        amixer -c $card sget Speaker 2>/dev/null |
+        string match -r 'Front Left: Playback [0-9]+' |
         head -n 1 |
-        string replace '%' ''
+        string replace -r '.*Playback ' ''
     )
 
-    if test -z "$volume"
+    if test -z "$speaker_value"
         return
     end
 
-    if test "$volume" = "$last_volume"
+    if test "$speaker_value" = "$last_value"
         return
     end
 
-    set --global last_volume "$volume"
-    amixer -q -c $card set "Bass Speaker" "$volume%"
+    set --global last_value $speaker_value
+    amixer -q -c $card sset "Bass Speaker" $speaker_value
 end
 
 sync_bass
 
 pactl subscribe | while read --local event
-    if string match --quiet '*on sink*' "$event"
+    if string match --quiet '*change*on sink*' "$event"
         sync_bass
     end
 end
