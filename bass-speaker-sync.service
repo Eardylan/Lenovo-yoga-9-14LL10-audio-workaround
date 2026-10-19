@@ -1,0 +1,12 @@
+[Unit]
+Description=Synchronize Bass Speaker volume with PipeWire
+After=pipewire.service wireplumber.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/fish %h/.local/bin/sync-bass-speaker.fish
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target
