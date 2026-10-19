@@ -3,5 +3,5 @@ The Lenovo Yoga Slim 9 (83CX) exposes `Speaker` and `Bass Speaker` as separate A
 
 also this was vibe coded with gpt so isnt too pretty
 
-script should live in /home/dylan/.local/bin/sync-bass-speaker.fish 
+script should live in /home/usr/.local/bin/sync-bass-speaker.fish 
 service should live in ~/.config/systemd/user/bass-speaker-sync.service 
